@@ -251,7 +251,7 @@
     left:auto;
     right:3px;
   }
-  .theme-toggle span{
+  .theme-toggle span:not(.theme-toggle-knob){
     position:relative;
     z-index:1;
     font-size:12.5px;
@@ -824,13 +824,13 @@ function openFile(node, pathArr, rowEl){
   document.getElementById('placeholder').classList.add('hidden');
   const frame = document.getElementById('viewerFrame');
   frame.classList.remove('hidden');
-  frame.src = fileUrl;
+  frame.src = fileUrl + '#view=FitH';
 
   document.getElementById('viewerToolbar').style.display = 'flex';
   document.getElementById('viewerTitle').textContent = node.name;
   document.getElementById('viewerBreadcrumb').textContent = pathArr.join(' › ');
   const openBtn = document.getElementById('openTabBtn');
-  openBtn.href = fileUrl;
+  openBtn.href = fileUrl + '#view=FitH';
   const dlBtn = document.getElementById('downloadBtn');
   dlBtn.href = fileUrl;
   dlBtn.download = node.name;
