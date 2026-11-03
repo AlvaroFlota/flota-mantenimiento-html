@@ -242,8 +242,8 @@
     width:20px;
     height:20px;
     border-radius:50%;
-    background:var(--panel);
-    border:1px solid var(--border);
+    background:var(--accent);
+    border:1px solid var(--accent);
     box-shadow:0 1px 3px rgba(0,0,0,.25);
     transition:left .2s ease, right .2s ease;
   }
@@ -689,6 +689,34 @@
     border-top:1px solid var(--border);
     flex-shrink:0;
   }
+
+  @media (max-width: 640px){
+    :root{
+      --home-scale:0.74;
+    }
+    .home-row-track{
+      gap:0.5em;
+      padding:6px 16px 12px;
+    }
+    .viewer-toolbar{
+      flex-wrap:wrap;
+      padding:10px 14px;
+      gap:8px 10px;
+    }
+    .viewer-title-wrap{
+      flex:1 1 calc(100% - 46px);
+    }
+    .viewer-actions{
+      flex:1 1 100%;
+      width:100%;
+    }
+    .viewer-actions .btn{
+      flex:1;
+      justify-content:center;
+      padding:9px 10px;
+      font-size:11.5px;
+    }
+  }
 </style>
 </head>
 <body>
@@ -1044,7 +1072,7 @@ const FOLDER_LOGO = {"Fiat Ducato": "Fiat", "Ford Transit": "Ford"};
 function buildHomeRow(nodes, levelIndex, scale){
   const row = document.createElement('div');
   row.className = 'home-row';
-  row.style.fontSize = (24 * scale) + 'px';
+  row.style.fontSize = 'calc(' + (24 * scale) + 'px * var(--home-scale, 1))';
   const track = document.createElement('div');
   track.className = 'home-row-track';
   nodes.forEach(node => {
