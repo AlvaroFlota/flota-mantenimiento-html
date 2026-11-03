@@ -251,14 +251,23 @@
     left:auto;
     right:3px;
   }
-  .theme-toggle span:not(.theme-toggle-knob){
-    position:relative;
+  .theme-toggle .sun,
+  .theme-toggle .moon{
+    position:absolute;
+    top:3px;
+    width:20px;
+    height:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     z-index:1;
-    font-size:12.5px;
+    font-size:13px;
     line-height:1;
     opacity:.4;
     transition:opacity .15s ease;
   }
+  .theme-toggle .sun{ left:3px; }
+  .theme-toggle .moon{ right:3px; }
   :root:not([data-theme="dark"]) .theme-toggle .sun{opacity:1;}
   :root[data-theme="dark"] .theme-toggle .moon{opacity:1;}
   .chip-blue-light{background:#B8DEF5;}
@@ -444,6 +453,33 @@
     background:var(--bg);
     overflow-y:auto;
     padding:24px 16px;
+  }
+  .mobile-open-notice{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    gap:10px;
+    color:var(--text);
+    background:var(--bg);
+    overflow-y:auto;
+    padding:24px 16px;
+    text-align:center;
+  }
+  .mobile-open-notice .big{
+    font-size:40px;
+  }
+  .mobile-open-notice p{
+    max-width:320px;
+    color:var(--text-muted);
+    font-size:14px;
+    line-height:1.4;
+    margin:0;
+  }
+  .mobile-open-notice .mobile-open-hint{
+    font-size:12.5px;
   }
   .placeholder .big{
     font-size:40px;
@@ -691,6 +727,17 @@
   }
 
   @media (max-width: 640px){
+    header h1{
+      transition:opacity .15s ease;
+    }
+    header.search-focused h1{
+      display:none;
+    }
+    header.search-focused .search-wrap{
+      flex:1 1 auto;
+      max-width:none;
+    }
+
     :root{
       --home-scale:0.74;
     }
@@ -762,6 +809,11 @@
         <div id="searchResults" class="hidden"></div>
       </div>
       <iframe id="viewerFrame" class="hidden"></iframe>
+      <div class="mobile-open-notice hidden" id="mobileOpenNotice">
+        <div class="big">📄</div>
+        <p>Este documento se ha abierto en una pestaña nueva para que puedas verlo completo, desplazarte por todas las páginas y hacer zoom.</p>
+        <p class="mobile-open-hint">Si no se ha abierto, usa el botón "Abrir en pestaña" de arriba.</p>
+      </div>
     </div>
   </section>
 </main>
@@ -820,11 +872,20 @@ function openFile(node, pathArr, rowEl){
   document.querySelectorAll('.file-row.active').forEach(r=>r.classList.remove('active'));
   rowEl.classList.add('active');
   const fileUrl = node.file;
+  const isMobile = window.matchMedia('(max-width: 640px)').matches;
 
   document.getElementById('placeholder').classList.add('hidden');
   const frame = document.getElementById('viewerFrame');
-  frame.classList.remove('hidden');
-  frame.src = fileUrl + '#view=FitH';
+  const notice = document.getElementById('mobileOpenNotice');
+  if(isMobile){
+    frame.classList.add('hidden');
+    frame.src = '';
+    notice.classList.remove('hidden');
+  } else {
+    notice.classList.add('hidden');
+    frame.classList.remove('hidden');
+    frame.src = fileUrl + '#view=FitH';
+  }
 
   document.getElementById('viewerToolbar').style.display = 'flex';
   document.getElementById('viewerTitle').textContent = node.name;
@@ -834,6 +895,9 @@ function openFile(node, pathArr, rowEl){
   const dlBtn = document.getElementById('downloadBtn');
   dlBtn.href = fileUrl;
   dlBtn.download = node.name;
+  if(isMobile){
+    openBtn.click();
+  }
 }
 
 function closeViewer(){
@@ -841,6 +905,7 @@ function closeViewer(){
   const frame = document.getElementById('viewerFrame');
   frame.classList.add('hidden');
   frame.src = '';
+  document.getElementById('mobileOpenNotice').classList.add('hidden');
   document.getElementById('placeholder').classList.remove('hidden');
   document.querySelectorAll('.file-row.active').forEach(r => r.classList.remove('active'));
 }
@@ -1206,6 +1271,13 @@ homeBackBtn.addEventListener('click', () => {
 
 renderHomeNav();
 
+const headerEl = document.querySelector('header');
+document.getElementById('searchInput').addEventListener('focus', ()=>{
+  headerEl.classList.add('search-focused');
+});
+document.getElementById('searchInput').addEventListener('blur', ()=>{
+  headerEl.classList.remove('search-focused');
+});
 document.getElementById('searchInput').addEventListener('input', (e)=>{
   const q = e.target.value;
   if(q.trim()){
