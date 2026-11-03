@@ -727,6 +727,12 @@
   }
 
   @media (max-width: 640px){
+    /* iOS Safari auto-zooms the page when a focused input's font-size is
+       under 16px; keep it at 16px here so focusing the search box doesn't
+       trigger that zoom and shift/decenter the whole layout. */
+    .search-wrap input{
+      font-size:16px;
+    }
     header h1{
       transition:opacity .15s ease;
     }
