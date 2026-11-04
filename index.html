@@ -1075,8 +1075,8 @@ const searchResultsEl = document.getElementById('searchResults');
 function renderSearchResults(rawQuery){
   searchResultsEl.innerHTML = '';
   const q = normalize(rawQuery.trim());
-  const matches = ALL_FILES.filter(({node, pathArr}) =>
-    normalize(node.name).includes(q) || normalize(pathArr.join(' ')).includes(q)
+  const matches = ALL_FILES.filter(({node}) =>
+    normalize(node.name).includes(q)
   );
   if(matches.length === 0){
     const empty = document.createElement('div');
